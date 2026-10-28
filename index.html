@@ -411,6 +411,15 @@ dialog.modal textarea{min-height:84px}
 .adm-log div:first-child{border-top:0}
 @media (max-width:640px){.adm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.reasons{grid-template-columns:1fr}.adm-log div{grid-template-columns:1fr;gap:2px}}
 #auth-slot{display:inline-flex;align-items:center;gap:6px}
+/* 0.0.9 가게 위치 · 지도 */
+.shop-addr{margin:8px 0 0;font-size:13.5px;color:var(--ink-soft);overflow-wrap:anywhere}
+.shop-addr b{color:var(--ink);font-size:12.5px;margin-right:6px}
+.map-btns{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}
+.map-btns .btn{padding:5px 12px;font-size:12.5px}
+.post-map{width:100%;height:240px;border-radius:var(--r);border:1px solid var(--line);overflow:hidden;background:var(--chip)}
+.manual-shop{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:10px}
+.manual-shop .wide{grid-column:1/-1}
+@media (max-width:600px){.manual-shop{grid-template-columns:minmax(0,1fr)}.post-map{height:200px}}
 </style>
 
 <div class="proto" id="mode-text">CIRCLE 커뮤니티 프로토타입</div>
@@ -471,6 +480,11 @@ dialog.modal textarea{min-height:84px}
    ========================================================================== */
 const SUPABASE_URL = 'https://eqqtdcuqkhbsromxzajj.supabase.co';   // 예) 'https://abcdefghijkl.supabase.co'
 const SUPABASE_KEY = 'sb_publishable_wNKpKt2kf5sH4O16LLrmZw_OclWqaXi';   // 예) 'sb_publishable_...'  (공개 키만!)
+
+/* 카카오 지도 (0.0.9): developers.kakao.com › 내 애플리케이션 › 앱 키의 "JavaScript 키"를 넣으세요.
+   JavaScript 키는 사이트에 등록한 주소에서만 동작하므로 공개돼도 괜찮아요. (REST API 키·Admin 키는 넣지 마세요)
+   비워 두면 가게를 직접 입력하고, 글에는 네이버 지도 · 카카오맵 열기 버튼만 붙어요. */
+const KAKAO_JS_KEY = 'ccddd4bc26886af894225f5ba676bf32';
 
 /* ---------- 음식 사진 대신 쓰는 캔버스 일러스트 ---------- */
 const IMG = {};
@@ -808,9 +822,11 @@ function post(id){
   ${p.hidden?`<div class="warn-box"><span><b>숨겨진 글</b> · ${p.hidBy==='auto'?'신고가 3건 쌓여 운영진 확인 전까지 자동으로 가려졌어요.':'운영진이 운영 정책에 따라 숨겼어요.'} 지금은 글쓴이와 운영진에게만 보여요.${p.hidWhy&&p.hidBy!=='auto'?` 사유: ${esc(p.hidWhy)}`:''}</span>${isAdmin()?'<a class="btn" href="#admin">신고 처리 화면</a>':''}</div>`:''}
   ${isRev?`<section class="info-card" aria-label="방문 정보">
     <div><div class="shop"><div><h2>${esc(p.shop.name)}</h2><p>${esc(p.shop.type)} · ${esc(p.shop.area)}</p></div><a class="btn" href="#post-${p.id}" data-shop style="padding:6px 12px;font-size:12.5px">가게 리뷰 ${same.length+1}</a></div>
+      ${p.shop.addr?(()=>{const L=mapLinks(p.shop);return `<p class="shop-addr"><b>주소</b>${esc(p.shop.addr)}</p><div class="map-btns"><a class="btn" href="${L.naver}" target="_blank" rel="noopener">네이버 지도</a><a class="btn" href="${L.kakao}" target="_blank" rel="noopener">카카오맵</a>${L.route?`<a class="btn" href="${L.route}" target="_blank" rel="noopener">길찾기</a>`:''}</div>`})():''}
       <dl class="kv"><dt>방문일</dt><dd class="num">${p.visit.replace(/-/g,'.')} · ${p.time}</dd><dt>누구와</dt><dd>${p.w}</dd></dl>${lk?lockTag:''}<dl class="kv ${lk?'blur':''}" style="margin-top:${lk?0:7}px" ${lk?'aria-hidden="true"':''}><dt>웨이팅</dt><dd>${lk?'평일 기준 약 00분':esc(p.wait)}</dd><dt>예약</dt><dd>${lk?'회원 공개 정보':esc(p.resv)}</dd><dt>주차</dt><dd>${lk?'회원 공개 정보':esc(p.park)}</dd><dt>재방문</dt><dd><b style="color:var(--accent)">${lk?'재방문 의사':esc(p.re)}</b></dd></dl></div>
     <div><div class="total"><b>${lk?'?.?':total.toFixed(1)}</b><span>/ 5 · 여섯 항목 평균${lk?' · 로그인하면 보여요':''}</span></div><div class="bars">${p.sc.slice(0,2).map((v,i)=>`<div class="bar"><span>${SC[i]}</span><i><em style="width:${v/5*100}%"></em></i>${stars(v)}</div>`).join('')}</div>${lk?lockTag:''}<div class="bars ${lk?'blur':''}" style="margin-top:${lk?0:8}px" ${lk?'aria-hidden="true"':''}>${p.sc.slice(2).map((v,i)=>`<div class="bar"><span>${SC[i+2]}</span><i><em style="width:${lk?55+i*9:v/5*100}%"></em></i>${lk?'<span class="num">?.?</span>':stars(v)}</div>`).join('')}</div></div>
-  </section>`:''}
+  </section>
+  ${p.shop.addr&&KAKAO_JS_KEY?`<div id="post-map" class="post-map" data-id="${p.id}" role="img" aria-label="${esc(p.shop.name)} 위치 지도"></div>`:''}`:''}
   ${imgs.length?`<div class="gallery ${imgs.length===1?'one':''}">${imgs.map((s,i)=>`<img src="${s}" alt="${isRev?esc(p.shop.name)+' 사진 '+(i+1):'첨부 사진'}">`).join('')}</div>`:''}
   ${isRev&&p.menus.length?`<section class="menus"><h3>먹은 메뉴 <span class="meta" style="display:inline;font-weight:400">· 합계 <span class="num ${lk?'blur':''}">${lk?'00,000원':won(p.menus.reduce((s,m)=>s+m[1],0))}</span></span></h3>${p.menus.map(m=>`<div class="menu-row"><b>${esc(m[0])}</b><span class="num ${lk?'blur':''}">${lk?'00,000원':won(m[1])}</span>${m[2]?`<p class="${lk?'blur':''}">${lk?'한 줄 평은 회원에게만 보여요':esc(m[2])}</p>`:''}</div>`).join('')}</section>`:''}
   ${acc.free?`<div class="free-note"><span>비회원 무료 열람 ${acc.free} / ${FREE_N} · 이 리뷰는 전부 볼 수 있어요</span><a href="#signup">가입하면 제한 없이 보기</a></div>`:''}
@@ -839,7 +855,7 @@ function write(){
     <div class="field"><label for="w-title">제목</label><input type="text" id="w-title" class="title-input" placeholder="${W.type==='review'?'예) 을지로3가 40년 된 순댓국집, 새벽에 다녀왔어요':'제목을 입력하세요'}" maxlength="80"></div></section>
   ${W.type==='review'?`
   <section class="fs"><h2>어디를 다녀왔나요 <small>필수</small></h2>
-    <div class="field shop-pick"><label for="w-shop">가게 찾기</label>${W.shop?`<div class="picked">${esc(W.shop[0])} <span style="font-weight:400">· ${esc(W.shop[1])}</span><button type="button" id="unpick" class="btn" style="margin-left:auto;padding:2px 10px;font-size:12px">변경</button></div>`:`<input type="text" id="w-shop" placeholder="가게 이름이나 동네로 검색 (예: 순대, 합정)" autocomplete="off"><div class="sugg" id="sugg" hidden></div>`}</div>
+    <div class="field shop-pick"><label for="w-shop">가게 찾기 <span class="hint" id="shop-note"></span></label>${W.manualShop?manualShopHtml():W.shop?`<div class="picked">${esc(W.shop[0])} <span style="font-weight:400">· ${esc(W.shop[3]&&W.shop[3].addr||W.shop[1])}</span><button type="button" id="unpick" class="btn" style="margin-left:auto;padding:2px 10px;font-size:12px">변경</button></div>`:`<input type="text" id="w-shop" placeholder="가게 이름이나 동네로 검색 (예: 순대, 합정)" autocomplete="off"><div class="sugg" id="sugg" hidden></div>`}</div>
     <div class="grid2"><div class="field"><label for="w-date">방문 날짜</label><input type="date" id="w-date" value="${TODAY}"></div><div class="field"><label for="w-time">시간대</label><select id="w-time">${['아침','점심','오후','저녁','밤'].map(t=>`<option ${t==='저녁'?'selected':''}>${t}</option>`).join('')}</select></div></div>
     <div class="field"><span class="lbl">누구와 갔나요</span><div class="chiprow">${['혼자','연인','친구','가족','회식'].map(w=>`<button type="button" class="chip ${W.w===w?'on':''}" data-ww="${w}">${w}</button>`).join('')}</div></div></section>
   <section class="fs"><h2>먹은 메뉴와 가격</h2><div id="menu-rows" style="display:flex;flex-direction:column;gap:8px">${W.menus.map((m,i)=>`<div class="mrow"><input type="text" id="m-n-${i}" placeholder="메뉴 이름" value="${esc(m[0])}" aria-label="메뉴 이름"><input type="number" id="m-p-${i}" placeholder="가격(원)" value="${esc(m[1])}" aria-label="가격"><input type="text" class="note" id="m-t-${i}" placeholder="한 줄 평" value="${esc(m[2])}" aria-label="한 줄 평"><button type="button" class="x" data-mdel="${i}" aria-label="메뉴 삭제">×</button></div>`).join('')}</div>
@@ -854,7 +870,7 @@ function write(){
   </form>`;
 }
 function readMenus(){W.menus=W.menus.map((m,i)=>[($('#m-n-'+i)||{}).value||'',($('#m-p-'+i)||{}).value||'',($('#m-t-'+i)||{}).value||''])}
-function keepFields(fn){const ids=['w-board','w-cat','w-head','w-title','w-date','w-time','w-wait','w-resv','w-park','w-re','w-body','w-tags'];const v={};ids.forEach(i=>{const e=$('#'+i);if(e)v[i]=e.value});if($('#menu-rows'))readMenus();fn();render();ids.forEach(i=>{const e=$('#'+i);if(e&&v[i]!=null)e.value=v[i]})}
+function keepFields(fn){const ids=['w-sname','w-stype','w-saddr','w-board','w-cat','w-head','w-title','w-date','w-time','w-wait','w-resv','w-park','w-re','w-body','w-tags'];const v={};ids.forEach(i=>{const e=$('#'+i);if(e)v[i]=e.value});if($('#menu-rows'))readMenus();fn();render();ids.forEach(i=>{const e=$('#'+i);if(e&&v[i]!=null)e.value=v[i]})}
 
 /* ---------- Supabase 연결: 교안 방식 (라이브러리 없이 fetch) ----------
    /rest/v1/…  표 읽기·쓰기      /auth/v1/…  가입·로그인·토큰
@@ -996,7 +1012,7 @@ const TODAY=kst(new Date().toISOString()).slice(0,10);
 function fromRow(r){
   const p={hidden:!!r.hidden,hidBy:r.hidden_by,hidWhy:r.hidden_reason,id:r.id,b:r.board_id,head:r.head,title:r.title,body:r.body&&r.body.length?r.body:null,au:r.author_nick,authorId:r.author_id,d:kst(r.created_at),v:r.views,up:r.up,pin:r.pinned,
     cat:r.cat||undefined,img:r.img||undefined,seed:r.seed||undefined,w:r.with_whom||undefined,ok:r.verified,sponsor:r.sponsored,tags:r.tags&&r.tags.length?r.tags:null};
-  if(r.shop_name)Object.assign(p,{shop:{name:r.shop_name,area:r.shop_area||'',type:r.shop_type||''},visit:r.visit_date||'',time:r.time_slot||'',wait:r.wait||'',resv:r.resv||'',park:r.park||'',re:r.revisit||'',
+  if(r.shop_name)Object.assign(p,{shop:{name:r.shop_name,area:r.shop_area||'',type:r.shop_type||'',addr:r.shop_address||'',lat:r.shop_lat??null,lng:r.shop_lng??null,pid:r.place_id||'',url:r.place_url||''},visit:r.visit_date||'',time:r.time_slot||'',wait:r.wait||'',resv:r.resv||'',park:r.park||'',re:r.revisit||'',
     sc:(r.scores||[0,0,0,0,0,0]).map(Number),menus:(r.menus||[]).map(m=>[m.name,m.price,m.note||''])});
   /* 댓글을 원 댓글 + 대댓글 모양으로 */
   const cs=(r.comments||[]).sort((a,b)=>a.created_at.localeCompare(b.created_at)).map(c=>({aid:c.author_id,hidden:!!c.hidden,hidBy:c.hidden_by,id:c.id,parent:c.parent_id,au:c.author_nick,t:c.body,d:kst(c.created_at).slice(11),up:c.up,re:[]}));
@@ -1035,6 +1051,52 @@ async function loadMine(){
     await Promise.all([...add('votes',guest.voted,'voted',k=>({post_id:+k})),...add('scraps',guest.scrap,'scrap',k=>({post_id:+k})),...add('follows',guest.follow,'follow',k=>({nick:k}))]);
   }catch(e){}
   await loadProfile();
+}
+
+/* ---------- 0.0.9 가게 위치 · 지도 ----------
+   카카오 지도 SDK는 키가 있을 때만 처음 필요할 때 한 번 불러옴 (장소 검색 services 포함) */
+let KAKAO_P=null,MAP_ON=false,FOUND=[],SHOP_T=0;
+function kakaoReady(){
+  if(!KAKAO_JS_KEY)return Promise.resolve(null);
+  if(KAKAO_P)return KAKAO_P;
+  KAKAO_P=new Promise(res=>{const s=document.createElement('script');
+    s.src='https://dapi.kakao.com/v2/maps/sdk.js?appkey='+encodeURIComponent(KAKAO_JS_KEY)+'&libraries=services&autoload=false';
+    s.onload=()=>{try{kakao.maps.load(()=>res(window.kakao))}catch(e){res(null)}};s.onerror=()=>res(null);
+    document.head.appendChild(s);setTimeout(()=>res(null),8000)});
+  KAKAO_P.then(k=>{MAP_ON=!!k;if(!k)console.warn('카카오 지도를 불러오지 못했어요. JavaScript 키와 사이트 도메인 등록을 확인해 주세요.')});
+  return KAKAO_P;
+}
+/* 지도앱 연결 주소: 휴대폰에서는 네이버 지도·카카오맵 앱이 있으면 앱으로 열림 */
+function mapLinks(s){
+  const q=encodeURIComponent(s.name+' '+(s.addr||'')),has=s.lat!=null&&s.lng!=null,n=encodeURIComponent(s.name);
+  return {naver:'https://map.naver.com/p/search/'+q,
+    kakao:s.pid?'https://place.map.kakao.com/'+encodeURIComponent(s.pid):has?`https://map.kakao.com/link/map/${n},${s.lat},${s.lng}`:'https://map.kakao.com/link/search/'+q,
+    route:has?`https://map.kakao.com/link/to/${n},${s.lat},${s.lng}`:''};
+}
+async function drawPostMap(){
+  const el=$('#post-map');if(!el)return;const p=findPost(+el.dataset.id);if(!p||!p.shop)return;
+  const k=await kakaoReady();if(!k||!document.body.contains(el)){el.hidden=true;return}
+  let lat=p.shop.lat,lng=p.shop.lng;
+  if(lat==null&&p.shop.addr){   /* 직접 입력한 주소는 좌표가 없으니 주소로 위치를 찾음 */
+    const r=await new Promise(res=>new k.maps.services.Geocoder().addressSearch(p.shop.addr,(d,st)=>res(st===k.maps.services.Status.OK?d[0]:null)));
+    if(r){lat=+r.y;lng=+r.x}}
+  if(lat==null||!document.body.contains(el)){el.hidden=true;return}
+  el.hidden=false;const pos=new k.maps.LatLng(lat,lng),m=new k.maps.Map(el,{center:pos,level:3});new k.maps.Marker({map:m,position:pos});
+}
+const areaOf=a=>(a||'').split(/\s+/).slice(0,3).join(' ');
+function searchShops(q){
+  const box=$('#sugg');if(!box)return;box.hidden=!q;if(!q){box.innerHTML='';return}
+  const manual=`<button type="button" data-manual="${esc(q)}">"${esc(q)}" 직접 입력하기<small>목록에 없으면 가게 이름과 주소를 직접 적어요</small></button>`;
+  if(!MAP_ON){box.innerHTML=SHOPS.map((s,i)=>[s,i]).filter(([s])=>(s[0]+s[1]+s[2]).includes(q)).map(([s,i])=>`<button type="button" data-pick="${i}">${esc(s[0])}<small>${esc(s[1])} · ${esc(s[2])} · 예시 가게</small></button>`).join('')+manual;return}
+  clearTimeout(SHOP_T);SHOP_T=setTimeout(()=>new kakao.maps.services.Places().keywordSearch(q,(d,st)=>{
+    const inp=$('#w-shop');if(!inp||inp.value.trim()!==q)return;   /* 그 사이 검색어가 바뀌었으면 버림 */
+    FOUND=st===kakao.maps.services.Status.OK?d:[];
+    box.innerHTML=(FOUND.length?FOUND.map((r,i)=>`<button type="button" data-place="${i}">${esc(r.place_name)}<small>${esc(r.road_address_name||r.address_name)} · ${esc((r.category_name||'').split(' > ').slice(-1)[0])}</small></button>`).join(''):'<div class="hint" style="padding:10px 12px">카카오에서 찾은 가게가 없어요.</div>')+manual},{size:8}),300);
+}
+const manualShopHtml=()=>`<div class="manual-shop"><div class="field"><label for="w-sname">가게 이름</label><input type="text" id="w-sname" maxlength="40" value="${esc(W.shop?W.shop[0]:'')}"></div><div class="field"><label for="w-stype">종류</label><input type="text" id="w-stype" maxlength="20" placeholder="예) 순댓국, 라멘"></div><div class="field wide"><label for="w-saddr">주소 <span class="hint">도로명 주소를 적으면 글에 지도와 지도앱 버튼이 붙어요</span></label><input type="text" id="w-saddr" maxlength="100" placeholder="예) 전북 군산시 대학로 558"></div></div><button type="button" id="unpick" class="btn" style="align-self:flex-start;padding:4px 12px;font-size:12.5px">다시 검색하기</button>`;
+function afterRender(h){
+  if(h.startsWith('post-'))drawPostMap();
+  else if(h==='write')kakaoReady().then(k=>{const n=$('#shop-note');if(n)n.textContent=k?'카카오에서 실제 가게를 검색해요':'예시 가게만 검색돼요. 목록에 없으면 직접 입력할 수 있어요'});
 }
 
 /* ---------- 0.0.7 운영: 내 등급·제재 상태 ---------- */
@@ -1261,7 +1323,7 @@ function route(){
   else if(h==='me'){cur='';html=mePage()}
   else if(h==='search'){cur='';S.board='search';html=board()}
   else html=home();
-  renderNav(cur);renderAuthUI();$('#app').innerHTML=html;
+  renderNav(cur);renderAuthUI();$('#app').innerHTML=html;afterRender(h);
 }
 function render(){route()}
 function go(h){if(location.hash==='#'+h)route();else location.hash=h;window.scrollTo(0,0)}
@@ -1311,16 +1373,17 @@ document.addEventListener('click',e=>{
   else if(d.star){const [i,n]=d.star.split('-').map(Number);keepFields(()=>{W.sc[i]=n})}
   else if(t.id==='madd'){keepFields(()=>{W.menus.push(['','',''])})}
   else if(d.mdel){keepFields(()=>{W.menus.splice(+d.mdel,1);if(!W.menus.length)W.menus=[['','','']]})}
-  else if(d.pick){keepFields(()=>{W.shop=SHOPS[+d.pick]})}
-  else if(t.id==='unpick'){keepFields(()=>{W.shop=null})}
+  else if(d.pick){keepFields(()=>{W.manualShop=false;W.shop=SHOPS[+d.pick]})}
+  else if(d.place){const r=FOUND[+d.place];keepFields(()=>{W.manualShop=false;W.shop=[r.place_name,areaOf(r.address_name),(r.category_name||'').split(' > ').slice(-1)[0]||'음식점',{addr:r.road_address_name||r.address_name,lat:+r.y,lng:+r.x,pid:r.id,url:r.place_url}]})}
+  else if('manual' in d){keepFields(()=>{W.manualShop=true;W.shop=[d.manual,'','',{addr:''}]})}
+  else if(t.id==='unpick'){keepFields(()=>{W.shop=null;W.manualShop=false})}
   else if(t.id==='save-draft'){const v={at:new Date().toTimeString().slice(0,5),title:$('#w-title').value,body:$('#w-body').value};try{localStorage.setItem('circle-draft',JSON.stringify(v));toast('임시저장했어요')}catch(err){toast('이 브라우저에서는 임시저장을 쓸 수 없어요')}}
   else if(t.id==='load-draft'){try{const v=JSON.parse(localStorage.getItem('circle-draft'));$('#w-title').value=v.title;$('#w-body').value=v.body;$('#draft-box').hidden=true}catch(err){}}
 });
 document.addEventListener('input',e=>{
   if(e.target.id==='su-pw'||e.target.id==='su-pw2'){const a=$('#su-pw').value,b=$('#su-pw2').value,h=$('#pw-hint');const strong=a.length>=8&&/[A-Za-z]/.test(a)&&/\d/.test(a);
     if(!a){h.className='hint';h.textContent='비밀번호는 8자 이상, 영문과 숫자를 함께 써 주세요.'}else if(!strong){h.className='hint bad';h.textContent='8자 이상, 영문과 숫자를 함께 써 주세요.'}else if(b&&a!==b){h.className='hint bad';h.textContent='두 비밀번호가 달라요.'}else{h.className='hint ok';h.textContent=b?'좋아요. 두 비밀번호가 같아요.':'쓸 수 있는 비밀번호예요.'}}
-  if(e.target.id==='w-shop'){const q=e.target.value.trim();const box=$('#sugg');const res=q?SHOPS.map((s,i)=>[s,i]).filter(([s])=>(s[0]+s[1]+s[2]).includes(q)):[];
-    box.hidden=!q;box.innerHTML=res.length?res.map(([s,i])=>`<button type="button" data-pick="${i}">${esc(s[0])}<small>${esc(s[1])} · ${esc(s[2])}</small></button>`).join(''):`<button type="button" data-pick="new" disabled>"${esc(q)}" 가게가 아직 없어요. 등록 요청은 다음 단계에서 지원해요</button>`}
+  if(e.target.id==='w-shop')searchShops(e.target.value.trim());   /* 0.0.9: 카카오 장소 검색 (키 없으면 예시 가게 + 직접 입력) */
 });
 document.addEventListener('change',e=>{
   if(e.target.id==='su-all'){document.querySelectorAll('.ag').forEach(c=>c.checked=e.target.checked)}
@@ -1390,19 +1453,25 @@ document.addEventListener('submit',e=>{
     let p={id,b:$('#w-board').value,title,au:nick(),d:now,v:1,up:0,cm:0,tags:tags.length?tags:null,body:body.length?body:['(본문 없음)'],photos:W.photos.length?W.photos:null};
     p.sponsor=false;
     if(W.type==='review'){readMenus();
+      if(W.manualShop){const n=$('#w-sname').value.trim(),a=$('#w-saddr').value.trim(),ty=$('#w-stype').value.trim();
+        if(!n){err.textContent='가게 이름을 적어 주세요.';$('#w-sname').focus();return}
+        W.shop=[n,areaOf(a)||'주소 미입력',ty||'음식점',{addr:a}]}
       if(!W.shop){err.textContent='다녀온 가게를 검색해서 골라 주세요.';$('#w-shop')&&$('#w-shop').focus();return}
       if(W.sc.some(v=>!v)){err.textContent='여섯 항목 점수를 모두 매겨 주세요.';return}
       const imgByCat={'한식':'bibimbap','국밥·탕':'gukbap','면':'ramen','분식·야식':'tteokbokki','일식':'sushi','양식':'pasta','디저트·카페':'cake'};
       const cat=$('#w-cat').value;
-      Object.assign(p,{cat,head:'후기',img:imgByCat[cat],seed:id,w:W.w,ok:$('#w-receipt').checked,sponsor:$('#w-sponsor').checked,shop:{name:W.shop[0],area:W.shop[1],type:W.shop[2]},visit:$('#w-date').value||TODAY,time:$('#w-time').value,wait:$('#w-wait').value||'기록 안 함',resv:$('#w-resv').value,park:$('#w-park').value,re:$('#w-re').value,menus:W.menus.filter(m=>m[0]).map(m=>[m[0],+m[1]||0,m[2]]),sc:[...W.sc]});
+      Object.assign(p,{cat,head:'후기',img:imgByCat[cat],seed:id,w:W.w,ok:$('#w-receipt').checked,sponsor:$('#w-sponsor').checked,shop:Object.assign({name:W.shop[0],area:W.shop[1],type:W.shop[2]},(l=>l?{addr:l.addr||'',lat:l.lat??null,lng:l.lng??null,pid:l.pid||'',url:l.url||''}:{})(W.shop[3])),visit:$('#w-date').value||TODAY,time:$('#w-time').value,wait:$('#w-wait').value||'기록 안 함',resv:$('#w-resv').value,park:$('#w-park').value,re:$('#w-re').value,menus:W.menus.filter(m=>m[0]).map(m=>[m[0],+m[1]||0,m[2]]),sc:[...W.sc]});
     }else p.head=$('#w-head').value;
     const reset=()=>{W={type:'review',shop:null,w:'친구',sc:[0,0,0,0,0,0],photos:[],menus:[['','','']]}};
     if(AUTH.mode==='supabase'){
       const row={board_id:p.b,head:p.head,title:p.title,body:p.body,author_nick:nick(),tags:p.tags||[]};
       if(p.shop)Object.assign(row,{cat:p.cat,img:p.img,shop_name:p.shop.name,shop_area:p.shop.area,shop_type:p.shop.type,visit_date:p.visit,time_slot:p.time,with_whom:p.w,wait:p.wait,resv:p.resv,park:p.park,revisit:p.re,
-        scores:p.sc,menus:p.menus.map(m=>({name:m[0],price:m[1],note:m[2]||''})),verified:p.ok,sponsored:p.sponsor});
+        scores:p.sc,menus:p.menus.map(m=>({name:m[0],price:m[1],note:m[2]||''})),verified:p.ok,sponsored:p.sponsor,
+        shop_address:p.shop.addr||null,shop_lat:p.shop.lat??null,shop_lng:p.shop.lng??null,place_id:p.shop.pid||null,place_url:p.shop.url||null});
       const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;btn.textContent='등록하는 중';
-      sb('/rest/v1/posts',{method:'POST',auth:true,prefer:'return=representation',body:row}).then(([r])=>{
+      const LOC=['shop_address','shop_lat','shop_lng','place_id','place_url'],send=()=>sb('/rest/v1/posts',{method:'POST',auth:true,prefer:'return=representation',body:row});
+      send().catch(e=>{if(!/shop_address|shop_lat|place_id/i.test(e.message))throw e;   /* 0.0.9 SQL 실행 전이면 위치 없이 저장 */
+        LOC.forEach(k=>delete row[k]);toast('위치 칸이 아직 DB에 없어 위치 없이 저장해요. 0.0.9 SQL을 실행해 주세요');return send()}).then(([r])=>{
         const np=fromRow(r);np.photos=p.photos;POSTS.unshift(np);reset();go('post-'+np.id);
         toast(p.photos?'등록했어요. 사진은 아직 DB에 올라가지 않아 이 화면에서만 보여요':'등록했어요');
       }).catch(err=>{btn.disabled=false;btn.textContent='등록하기';err&&($('#w-err').textContent=koErr(err.message))});
