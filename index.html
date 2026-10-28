@@ -1,3 +1,7 @@
+<!doctype html>
+<html lang="ko">
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>CIRCLE 맛집 기록 커뮤니티</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -347,6 +351,7 @@ body.has-bar main{padding-bottom:80px}
   .locked-body{min-height:420px}
   #bell{display:none}
   #auth-slot .btn{padding:8px 12px}
+  #auth-slot{gap:4px}
   .logo span,.top .btn.primary span{display:none}
   .search{max-width:none}
   .top .wrap{gap:10px}
@@ -363,7 +368,49 @@ body.has-bar main{padding-bottom:80px}
   .gallery{aspect-ratio:4/3}
   .fs{padding:16px}
 }
+/* 사이트 하단 footer */
+footer.site-foot{border-top:1px solid var(--line);background:var(--surface);color:var(--ink-soft);font-size:13px;padding-block:28px calc(28px + env(safe-area-inset-bottom,0px))}
+.site-foot .wrap{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px 32px;align-items:start}
+.site-foot .f-brand b{display:block;color:var(--ink);font-size:15px;letter-spacing:.04em;margin-bottom:6px}
+.site-foot .f-brand p{margin:0;line-height:1.6}
+.site-foot nav ul{list-style:none;margin:0;padding:0;display:flex;flex-wrap:wrap;gap:8px 18px;justify-content:flex-end}
+.site-foot nav a{color:var(--ink-soft);text-decoration:none}
+.site-foot nav a:hover{color:var(--accent);text-decoration:underline}
+.site-foot small{grid-column:1/-1;display:block;padding-top:14px;border-top:1px solid var(--line);font-size:12px}
+@media (max-width:600px){.site-foot .wrap{grid-template-columns:minmax(0,1fr)}.site-foot nav ul{justify-content:flex-start}}
 @media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+/* 0.0.7 운영 기능: 신고 창, 숨김 안내, 관리자 화면, 인증번호 */
+.warn-box{font-size:13.5px;background:var(--accent-soft);color:var(--ink);border:1px solid var(--accent);border-radius:10px;padding:12px 14px;display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;justify-content:space-between}
+.warn-box b{color:var(--accent)}
+.link-btn{border:0;background:none;padding:0 2px;color:var(--ink-soft);font-size:12.5px;text-decoration:underline;text-underline-offset:3px}
+.link-btn[disabled]{text-decoration:none;opacity:.7;cursor:default}
+dialog.modal{border:1px solid var(--line);border-radius:14px;background:var(--surface);color:var(--ink);padding:0;width:min(460px,calc(100vw - 32px))}
+dialog.modal::backdrop{background:rgba(0,0,0,.45)}
+dialog.modal form{display:flex;flex-direction:column;gap:14px;padding:22px}
+dialog.modal h2{margin:0;font-size:19px}
+dialog.modal textarea{min-height:84px}
+.reasons{display:grid;grid-template-columns:1fr 1fr;gap:6px}
+.reasons label{display:flex;gap:6px;align-items:center;border:1px solid var(--line);border-radius:8px;padding:8px 10px;font-size:13.5px;cursor:pointer}
+.reasons label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.field input.otp{font-family:var(--f-num);font-size:26px;letter-spacing:.45em;text-align:center}
+.adm-stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.adm-stats div{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:12px 14px}
+.adm-stats b{display:block;font-family:var(--f-num);font-size:24px;line-height:1.3}
+.adm-stats span{font-size:12.5px;color:var(--ink-soft)}
+.adm-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px 16px;display:flex;flex-direction:column;gap:8px;min-width:0}
+.adm-card .top-line{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.adm-card h3{margin:0;font-size:15px;overflow-wrap:anywhere}
+.adm-card .ex{margin:0;font-size:13.5px;color:var(--ink-soft);overflow-wrap:anywhere}
+.adm-card ul{margin:0;padding-left:18px;font-size:13px}
+.adm-act{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.adm-act input{flex:1 1 200px;min-width:0;border:1px solid var(--line);border-radius:8px;padding:7px 10px;background:var(--bg)}
+.adm-act .btn{padding:6px 12px;font-size:13px}
+.tag.red{background:var(--accent-soft);color:var(--accent);font-weight:700}
+.adm-log{font-size:13px}
+.adm-log div{display:grid;grid-template-columns:96px 80px minmax(0,1fr);gap:10px;padding:9px 14px;border-top:1px solid var(--line)}
+.adm-log div:first-child{border-top:0}
+@media (max-width:640px){.adm-stats{grid-template-columns:repeat(2,minmax(0,1fr))}.reasons{grid-template-columns:1fr}.adm-log div{grid-template-columns:1fr;gap:2px}}
+#auth-slot{display:inline-flex;align-items:center;gap:6px}
 </style>
 
 <div class="proto" id="mode-text">CIRCLE 커뮤니티 프로토타입</div>
@@ -394,6 +441,23 @@ body.has-bar main{padding-bottom:80px}
   </aside>
   <main id="app"></main>
 </div>
+<footer class="site-foot">
+  <div class="wrap">
+    <div class="f-brand">
+      <b>CIRCLE</b>
+      <p>직접 다녀온 맛집을 메뉴, 가격, 웨이팅까지 꼼꼼히 남기는 맛집 기록 커뮤니티입니다.</p>
+    </div>
+    <nav aria-label="하단 메뉴">
+      <ul>
+        <li><a href="#b-notice">공지 · 운영 규칙</a></li>
+        <li><a href="#b-qna">질문 · 추천 요청</a></li>
+        <li><a href="#write">리뷰 쓰기</a></li>
+        <li><a href="#home">맨 처음으로</a></li>
+      </ul>
+    </nav>
+    <small>© 2026 CIRCLE · 군산대학교 홈페이지 만들기 수업 과제로 만든 사이트입니다.</small>
+  </div>
+</footer>
 <div class="toast" id="toast" hidden></div>
 
 <script>
@@ -616,7 +680,7 @@ const CMT_SPECIFIC={1:[
 const CMT_POOL=['사진만 봐도 배고프네요. 저장해 둡니다.','가격까지 적어 주셔서 감사해요. 이번 주말에 가 볼게요.','웨이팅 정보 정말 도움 됩니다. 평일 저녁도 비슷한가요?','저는 여기 서비스 점수 조금 더 줄 것 같아요. 직원분들 친절했어요.','양 점수 공감합니다. 둘이 가면 하나 더 시키는 게 좋아요.','지난달에 갔을 때보다 가격이 1,000원 올랐네요.','같이 간 사람 태그 덕분에 데이트 코스 찾기 편하네요.','이런 리뷰 때문에 이 카페 들어옵니다. 추천 누르고 갑니다.'];
 
 /* ---------- 상태 · 유틸 ---------- */
-const S={board:'all',view:'list',sort:'new',w:'전체',page:1,q:'',voted:{},scrap:{},follow:{},extraCmt:{},lastPage:'home',barClosed:false};
+const S={board:'all',view:'list',sort:'new',w:'전체',page:1,q:'',voted:{},scrap:{},follow:{},extraCmt:{},reported:{},lastPage:'home',barClosed:false};
 const $=s=>document.querySelector(s);
 /* 사회적 증거: 예시 숫자 (실서비스에서는 DB 집계값으로 교체) */
 function stat(key,min,max){return Math.round(min+rng(hstr(String(key)))()*(max-min))}
@@ -719,11 +783,11 @@ function comments(p,limit){
   if(!list){const R=rng(p.id*31);const n=Math.min(4,cmCount(p));list=[];const pool=Object.keys(USERS).filter(n=>n!==p.au&&n!=='운영진');for(let i=0;i<n;i++){list.push({au:pool[Math.floor(R()*pool.length)],t:CMT_POOL[Math.floor(R()*CMT_POOL.length)],d:`${String(8+i*3).padStart(2,'0')}:${String(Math.floor(R()*60)).padStart(2,'0')}`,up:Math.floor(R()*9)})}
     if(list[0]&&p.shop)list[0].re=[{au:p.au,t:'감사합니다! 궁금한 점 있으면 편하게 물어보세요.',d:'12:30'}]}
   list=list.concat(S.extraCmt[p.id]||[]);if(limit)list=list.slice(0,limit);
-  const one=(c,re)=>`<div class="cmt ${re?'re':''}">${av(c.au)}<div class="c-body"><div class="c-top"><b>${esc(c.au)}</b>${c.au===p.au?'<span class="is-writer">작성자</span>':''}<small class="num">${c.d}</small></div><p>${esc(c.t)}</p>${re?'':`<div class="c-act"><button type="button" data-reply>답글</button><button type="button" data-cup>추천 <span class="num">${c.up||0}</span></button></div>`}</div></div>`;
+  const one=(c,re)=>`<div class="cmt ${re?'re':''}">${av(c.au)}<div class="c-body"><div class="c-top"><b>${esc(c.au)}</b>${c.au===p.au?'<span class="is-writer">작성자</span>':''}<small class="num">${c.d}</small></div>${c.hidden?`<span class="tag red">숨겨진 댓글 · ${c.hidBy==='auto'?'신고 누적':'운영진'} · 나와 운영진에게만 보여요</span>`:''}<p>${esc(c.t)}</p><div class="c-act">${re?'':`<button type="button" data-reply>답글</button><button type="button" data-cup>추천 <span class="num">${c.up||0}</span></button>`}${reportBtn('comment',c.id,c.aid)}${isAdmin()&&c.id&&!c.hidden?`<button type="button" class="link-btn" data-admhide="comment-${c.id}">운영: 숨기기</button>`:''}</div></div></div>`;
   return list.map(c=>one(c)+(c.re||[]).map(r=>one(r,true)).join('')).join('');
 }
 function post(id){
-  const p=POSTS.find(x=>x.id===id);if(!p)return `<div class="empty">글을 찾을 수 없어요. <a href="#home">홈으로</a></div>`;
+  const p=findPost(id);if(!p)return `<div class="empty">삭제됐거나 운영 정책에 따라 숨겨진 글이에요. <a href="#home">홈으로</a></div>`;
   const b=boardOf(p.b),u=user(p.au),voted=S.voted[p.id],up=p.up+(voted?1:0);
   const same=p.shop?POSTS.filter(x=>x.id!==p.id&&x.img===p.img&&x.shop).slice(0,3):[];
   const isRev=!!p.shop;
@@ -739,7 +803,9 @@ function post(id){
   <div class="crumb"><a href="#home">CIRCLE</a><span>›</span><a href="#b-${p.b}">${esc(b.name)}</a>${p.cat?`<span>›</span><a href="#b-c-${p.cat}">${esc(p.cat)}</a>`:''}</div>
   <header class="post-h"><div class="chiprow">${p.head?`<span class="tag" style="color:var(--accent);font-weight:700">${p.head}</span>`:''}${p.ok?'<span class="tag ok">✓ 영수증 방문 인증</span>':''}${p.sponsor?'<span class="tag" style="font-weight:700">협찬 받음</span>':''}${p.w?`<span class="tag with">${p.w}랑 다녀옴</span>`:''}</div>
    <h1>${esc(p.title)}</h1>
-   <div class="author">${av(p.au)}<div class="who"><b>${esc(p.au)}</b>${u.badge?`<span class="badge">${u.badge}</span>`:''}<br><small>${u.lv} 등급 · <span class="num">${p.d.replace(/-/g,'.')}</span> · 조회 <span class="num">${p.v.toLocaleString()}</span></small></div>${p.au!==nick()?`<button class="btn follow ${S.follow[p.au]?'on':''}" type="button" data-follow="${esc(p.au)}">${S.follow[p.au]?'팔로잉':'팔로우'}</button>`:''}</div></header>
+   <div class="author">${av(p.au)}<div class="who"><b>${esc(p.au)}</b>${u.badge?`<span class="badge">${u.badge}</span>`:''}<br><small>${u.lv} 등급 · <span class="num">${p.d.replace(/-/g,'.')}</span> · 조회 <span class="num">${p.v.toLocaleString()}</span></small></div>${p.au!==nick()?`<button class="btn follow ${S.follow[p.au]?'on':''}" type="button" data-follow="${esc(p.au)}">${S.follow[p.au]?'팔로잉':'팔로우'}</button>`:''}</div>
+   <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:6px">${reportBtn('post',p.id,p.authorId)}${isAdmin()&&!p.hidden?`<button type="button" class="link-btn" data-admhide="post-${p.id}">운영: 숨기기</button>`:''}</div></header>
+  ${p.hidden?`<div class="warn-box"><span><b>숨겨진 글</b> · ${p.hidBy==='auto'?'신고가 3건 쌓여 운영진 확인 전까지 자동으로 가려졌어요.':'운영진이 운영 정책에 따라 숨겼어요.'} 지금은 글쓴이와 운영진에게만 보여요.${p.hidWhy&&p.hidBy!=='auto'?` 사유: ${esc(p.hidWhy)}`:''}</span>${isAdmin()?'<a class="btn" href="#admin">신고 처리 화면</a>':''}</div>`:''}
   ${isRev?`<section class="info-card" aria-label="방문 정보">
     <div><div class="shop"><div><h2>${esc(p.shop.name)}</h2><p>${esc(p.shop.type)} · ${esc(p.shop.area)}</p></div><a class="btn" href="#post-${p.id}" data-shop style="padding:6px 12px;font-size:12.5px">가게 리뷰 ${same.length+1}</a></div>
       <dl class="kv"><dt>방문일</dt><dd class="num">${p.visit.replace(/-/g,'.')} · ${p.time}</dd><dt>누구와</dt><dd>${p.w}</dd></dl>${lk?lockTag:''}<dl class="kv ${lk?'blur':''}" style="margin-top:${lk?0:7}px" ${lk?'aria-hidden="true"':''}><dt>웨이팅</dt><dd>${lk?'평일 기준 약 00분':esc(p.wait)}</dd><dt>예약</dt><dd>${lk?'회원 공개 정보':esc(p.resv)}</dd><dt>주차</dt><dd>${lk?'회원 공개 정보':esc(p.park)}</dd><dt>재방문</dt><dd><b style="color:var(--accent)">${lk?'재방문 의사':esc(p.re)}</b></dd></dl></div>
@@ -755,7 +821,7 @@ function post(id){
   ${p.up>=50?'<div class="notice-box">추천 50개를 넘어 인기글에 올라간 글입니다.</div>':''}
   ${same.length?`<section><div class="sec-h"><h2>비슷한 메뉴의 다른 리뷰</h2></div><div class="same">${same.map(x=>`<a href="#post-${x.id}"><img src="${photo(x)}" alt=""><div><b>${esc(x.shop.name)}</b><span class="meta">★ ${avg(x.sc).toFixed(1)} · ${esc(x.au)}</span></div></a>`).join('')}</div></section>`:''}
   <section class="comments"><h2>댓글 <span class="num" style="color:var(--accent)">${cmCount(p)+(S.extraCmt[p.id]||[]).length}</span></h2>${comments(p,lk?1:0)}${lk?`<div class="notice-box" style="margin-top:8px">댓글 <b>${Math.max(0,cmCount(p)-1)}</b>개가 더 있어요. <a href="#login" style="text-decoration:underline">로그인</a>하면 모두 볼 수 있어요.</div>`:''}
-    <form class="cmt-form" id="cmt-form" data-id="${p.id}"><textarea id="cmt-text" placeholder="다녀온 경험이 있다면 같이 남겨 주세요. 비방이나 광고는 삭제됩니다." aria-label="댓글 내용"></textarea><div><span>${AUTH.user?esc(nick())+'(으)로 작성':'<a href="#login" style="text-decoration:underline">로그인</a>하면 댓글을 쓸 수 있어요'}</span><button class="btn primary" type="submit">등록</button></div></form></section>
+    <form class="cmt-form" id="cmt-form" data-id="${p.id}"><textarea id="cmt-text" placeholder="다녀온 경험이 있다면 같이 남겨 주세요. 비방이나 광고는 삭제됩니다." aria-label="댓글 내용"></textarea><div><span>${banInfo()?'정지 기간에는 댓글을 쓸 수 없어요':AUTH.user?esc(nick())+'(으)로 작성':'<a href="#login" style="text-decoration:underline">로그인</a>하면 댓글을 쓸 수 있어요'}</span><button class="btn primary" type="submit">등록</button></div></form></section>
   </article>`;
 }
 
@@ -803,8 +869,14 @@ async function sha(t){try{const b=await crypto.subtle.digest('SHA-256',new TextE
 function profileFrom(u){const m=u.user_metadata||{};return {id:u.id,email:u.email||'',nickname:m.nickname||m.name||(u.email||'회원').split('@')[0],regions:m.regions||[],foods:m.foods||[],provider:(u.app_metadata&&u.app_metadata.provider)||'email',created:(u.created_at||'').slice(0,10)}}
 function setUser(p){AUTH.user=p;if(p&&!USERS[p.nickname])USERS[p.nickname]={c:'#ff5a3c',lv:'새싹'}}
 function koErr(m=''){
+  if(/duplicate key/i.test(m))return '이미 신고한 글이에요. 운영진이 확인하고 있어요.';
+  if(/Token has expired or is invalid|otp_expired/i.test(m))return '인증번호가 맞지 않거나 10분이 지났어요. 새 번호를 받아 주세요.';
+  if(/only request this after|security purposes/i.test(m))return '인증번호는 1분에 한 번만 다시 받을 수 있어요. 잠시 뒤에 눌러 주세요.';
+  if(/Email address not authorized/i.test(m))return '이 메일 주소로는 인증 메일을 보낼 수 없어요. Supabase 기본 메일은 팀원 주소로만 가요. 사용자 SMTP를 연결해 주세요.';
+  if(/Error sending (confirmation|recovery|magic)/i.test(m))return '인증 메일을 보내지 못했어요. Supabase의 SMTP 설정을 확인해 주세요.';
+  if(/should be different from the old/i.test(m))return '이전과 다른 비밀번호를 써 주세요.';
   if(/Invalid login credentials/i.test(m))return '이메일 또는 비밀번호가 맞지 않아요.';
-  if(/Email not confirmed/i.test(m))return '메일함에서 인증 링크를 먼저 눌러 주세요.';
+  if(/Email not confirmed/i.test(m))return '메일 인증이 아직 끝나지 않았어요. 메일로 받은 인증번호를 입력해 주세요.';
   if(/already registered|already exists/i.test(m))return '이미 가입된 이메일이에요. 로그인해 주세요.';
   if(/Password should be at least/i.test(m))return '비밀번호는 6자 이상이어야 해요.';
   if(/rate limit|too many/i.test(m))return '요청이 너무 잦아요. 잠시 후 다시 시도해 주세요.';
@@ -849,20 +921,21 @@ async function signUp(f){
   if(AUTH.mode==='supabase'){
     try{const r=await sb('/auth/v1/signup?redirect_to='+encodeURIComponent(location.href.split('#')[0]),{method:'POST',body:{email:f.email,password:f.password,data:{nickname:f.nickname,regions:f.regions,foods:f.foods,marketing:f.marketing}}});
       if(r&&r.access_token){saveSession(r);await loadMine();return {}}
-      return {needVerify:true};          /* Confirm email 이 켜져 있으면 세션 없이 메일만 감 */
+      /* Confirm email 이 켜져 있으면 세션 없이 6자리 인증번호 메일만 감 → #verify 에서 입력 */
+      AUTH.otp={email:f.email,kind:'signup',sent:Date.now(),until:Date.now()+600e3};return {needVerify:true};
     }catch(e){return {error:koErr(e.message)}}
   }
   const users=demoLoad('circle-users')||{};
   if(users[f.email])return {error:'이미 가입된 이메일이에요. 로그인해 주세요.'};
   if(Object.values(users).some(u=>u.profile.nickname===f.nickname)||USERS[f.nickname])return {error:'이미 쓰는 닉네임이에요. 다른 닉네임을 골라 주세요.',field:'su-nick'};
-  const profile={id:'demo-'+Date.now(),email:f.email,nickname:f.nickname,regions:f.regions,foods:f.foods,provider:'email',created:new Date().toISOString().slice(0,10)};
-  users[f.email]={hash:await sha(f.password),profile};demoSave('circle-users',users);demoSave('circle-session',profile);setUser(profile);
-  return {};
+  /* 데모 모드: 메일 대신 화면에 인증번호를 보여 줌 */
+  AUTH.otp={email:f.email,kind:'signup',sent:Date.now(),until:Date.now()+600e3,demo:{code:rand6(),f,hash:await sha(f.password)}};
+  return {needVerify:true};
 }
 async function signIn(email,password){
   if(AUTH.mode==='supabase'){
-    try{saveSession(await sb('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password}}));await loadMine();return {}}
-    catch(e){return {error:koErr(e.message)}}
+    try{saveSession(await sb('/auth/v1/token?grant_type=password',{method:'POST',body:{email,password}}));await reloadAll();return {}}
+    catch(e){return {error:koErr(e.message),unconfirmed:/not confirmed/i.test(e.message)}}
   }
   const u=(demoLoad('circle-users')||{})[email];
   if(!u||u.hash!==await sha(password))return {error:'이메일 또는 비밀번호가 맞지 않아요.'};
@@ -870,16 +943,50 @@ async function signIn(email,password){
 }
 async function signOut(){
   if(AUTH.mode==='supabase'){try{await sb('/auth/v1/logout',{method:'POST',auth:true})}catch(e){}saveSession(null);restoreUp()}
-  demoSave('circle-session',null);setUser(null);S.voted={};S.scrap={};S.follow={}}
+  demoSave('circle-session',null);setUser(null);S.voted={};S.scrap={};S.follow={};S.reported={};AUTH.prof=null;ADM.loaded=false;
+  if(AUTH.mode==='supabase')await loadPosts()}
 async function oauth(provider){
   if(AUTH.mode!=='supabase'){toast((provider==='kakao'?'카카오':'구글')+' 로그인은 Supabase 키를 넣고 대시보드에서 켜면 동작해요');return}
   location.href=SUPABASE_URL+'/auth/v1/authorize?provider='+provider+'&redirect_to='+encodeURIComponent(location.href.split('#')[0]);
 }
-async function resetPw(email){
-  if(!email){return '비밀번호를 찾을 이메일을 먼저 입력해 주세요.'}
-  if(AUTH.mode!=='supabase'){toast('데모 모드에서는 재설정 메일을 보내지 않아요');return ''}
-  try{await sb('/auth/v1/recover?redirect_to='+encodeURIComponent(location.href.split('#')[0]),{method:'POST',body:{email}})}catch(e){return koErr(e.message)}
-  toast(email+'로 재설정 메일을 보냈어요');return '';
+/* ---------- 0.0.7 인증번호: 가입 인증 · 비밀번호 찾기 ----------
+   Supabase 대시보드 메일 양식(Confirm signup, Reset password)에 {{ .Token }} 을 넣으면 6자리 번호가 감
+   가입:   POST /auth/v1/signup  → 메일 → POST /auth/v1/verify {type:'email', email, token}
+   재설정: POST /auth/v1/recover → 메일 → POST /auth/v1/verify {type:'recovery', email, token} → PUT /auth/v1/user {password} */
+const rand6=()=>String(Math.floor(100000+Math.random()*900000));
+async function verifyCode(code){
+  const o=AUTH.otp;if(!o)return {error:'인증할 메일 정보가 없어요. 처음부터 다시 해 주세요.'};
+  if(Date.now()>o.until)return {error:'10분이 지났어요. 인증번호를 다시 받아 주세요.'};
+  if(AUTH.mode==='supabase'){
+    try{saveSession(await sb('/auth/v1/verify',{method:'POST',body:{type:o.kind==='recovery'?'recovery':'email',email:o.email,token:code}}));if(o.kind!=='recovery')await reloadAll();return {}}
+    catch(e){return {error:koErr(e.message)}}
+  }
+  if(code!==o.demo.code)return {error:'인증번호가 맞지 않아요. 메일(데모 모드에서는 위 안내)의 번호를 확인해 주세요.'};
+  if(o.kind==='signup'){const f=o.demo.f,users=demoLoad('circle-users')||{};
+    const profile={id:'demo-'+Date.now(),email:f.email,nickname:f.nickname,regions:f.regions,foods:f.foods,provider:'email',created:new Date().toISOString().slice(0,10)};
+    users[f.email]={hash:o.demo.hash,profile};demoSave('circle-users',users);demoSave('circle-session',profile);setUser(profile)}
+  return {};
+}
+async function resendCode(){
+  const o=AUTH.otp;if(!o)return '';
+  if(Date.now()-o.sent<60e3)return '인증번호는 1분에 한 번만 다시 받을 수 있어요.';
+  if(AUTH.mode==='supabase'){
+    try{if(o.kind==='recovery')await sb('/auth/v1/recover',{method:'POST',body:{email:o.email}});
+        else await sb('/auth/v1/resend',{method:'POST',body:{type:'signup',email:o.email}})}
+    catch(e){return koErr(e.message)}
+  }else o.demo.code=rand6();
+  o.sent=Date.now();o.until=Date.now()+600e3;return '';
+}
+async function sendRecovery(email){
+  if(AUTH.mode==='supabase'){try{await sb('/auth/v1/recover',{method:'POST',body:{email}})}catch(e){return {error:koErr(e.message)}}}
+  else if(!(demoLoad('circle-users')||{})[email])return {error:'이 브라우저에 가입한 이메일이 아니에요. (데모 모드)'};
+  AUTH.otp={email,kind:'recovery',sent:Date.now(),until:Date.now()+600e3,demo:AUTH.mode==='supabase'?null:{code:rand6()}};return {};
+}
+async function finishRecovery(code,pw){
+  const r=await verifyCode(code);if(r.error)return r;   /* 번호가 맞으면 로그인된 상태가 됨 */
+  if(AUTH.mode==='supabase'){try{await sb('/auth/v1/user',{method:'PUT',auth:true,body:{password:pw}});await reloadAll()}catch(e){return {error:koErr(e.message)}}}
+  else{const users=demoLoad('circle-users'),u=users[AUTH.otp.email];u.hash=await sha(pw);demoSave('circle-users',users);demoSave('circle-session',u.profile);setUser(u.profile)}
+  return {};
 }
 function needLogin(msg){if(AUTH.user)return false;AUTH.after=location.hash.slice(1)||'home';AUTH.msg=msg;go('login');return true}
 function nick(){return AUTH.user?AUTH.user.nickname:''}
@@ -887,24 +994,32 @@ function nick(){return AUTH.user?AUTH.user.nickname:''}
 /* ---------- 글·댓글 읽기 (REST, 요청 한 번) ---------- */
 const TODAY=kst(new Date().toISOString()).slice(0,10);
 function fromRow(r){
-  const p={id:r.id,b:r.board_id,head:r.head,title:r.title,body:r.body&&r.body.length?r.body:null,au:r.author_nick,authorId:r.author_id,d:kst(r.created_at),v:r.views,up:r.up,pin:r.pinned,
+  const p={hidden:!!r.hidden,hidBy:r.hidden_by,hidWhy:r.hidden_reason,id:r.id,b:r.board_id,head:r.head,title:r.title,body:r.body&&r.body.length?r.body:null,au:r.author_nick,authorId:r.author_id,d:kst(r.created_at),v:r.views,up:r.up,pin:r.pinned,
     cat:r.cat||undefined,img:r.img||undefined,seed:r.seed||undefined,w:r.with_whom||undefined,ok:r.verified,sponsor:r.sponsored,tags:r.tags&&r.tags.length?r.tags:null};
   if(r.shop_name)Object.assign(p,{shop:{name:r.shop_name,area:r.shop_area||'',type:r.shop_type||''},visit:r.visit_date||'',time:r.time_slot||'',wait:r.wait||'',resv:r.resv||'',park:r.park||'',re:r.revisit||'',
     sc:(r.scores||[0,0,0,0,0,0]).map(Number),menus:(r.menus||[]).map(m=>[m.name,m.price,m.note||''])});
   /* 댓글을 원 댓글 + 대댓글 모양으로 */
-  const cs=(r.comments||[]).sort((a,b)=>a.created_at.localeCompare(b.created_at)).map(c=>({id:c.id,parent:c.parent_id,au:c.author_nick,t:c.body,d:kst(c.created_at).slice(11),up:c.up,re:[]}));
+  const cs=(r.comments||[]).sort((a,b)=>a.created_at.localeCompare(b.created_at)).map(c=>({aid:c.author_id,hidden:!!c.hidden,hidBy:c.hidden_by,id:c.id,parent:c.parent_id,au:c.author_nick,t:c.body,d:kst(c.created_at).slice(11),up:c.up,re:[]}));
   p.cmts=cs.filter(c=>!c.parent);cs.filter(c=>c.parent).forEach(c=>{const m=cs.find(x=>x.id===c.parent);(m?m.re:p.cmts).push(c)});
   return p;
 }
-const POST_SELECT='/rest/v1/posts?select=*,comments(id,parent_id,author_nick,body,up,created_at)&order=created_at.desc';
+const POST_SELECT='/rest/v1/posts?select=*,comments(id,parent_id,author_id,author_nick,body,up,created_at,hidden,hidden_by)&order=created_at.desc';
+const POST_SELECT_OLD='/rest/v1/posts?select=*,comments(id,parent_id,author_nick,body,up,created_at)&order=created_at.desc';
+/* 숨긴 글은 서버가 글쓴이·관리자에게만 보내 줌 → 목록에서는 빼고(HIDDEN) 상세 화면에서만 안내와 함께 보여 줌 */
+let HIDDEN=[];
+const findPost=id=>POSTS.find(x=>x.id===id)||HIDDEN.find(x=>x.id===id);
 async function loadPosts(){
   if(!DB_ON)return;
-  try{const rows=await sb(POST_SELECT);demoSave(CACHE_KEY,rows);POSTS=rows.map(fromRow);AUTH.dbOk=true}
+  try{let rows;const auth=!!AUTH.user;
+    try{rows=await sb(POST_SELECT,{auth})}catch(e){if(!/column|does not exist/i.test(e.message))throw e;rows=await sb(POST_SELECT_OLD,{auth})}  /* 0.0.7 SQL 실행 전이면 예전 방식 */
+    demoSave(CACHE_KEY,rows.filter(r=>!r.hidden));const all=rows.map(fromRow);POSTS=all.filter(p=>!p.hidden);HIDDEN=all.filter(p=>p.hidden);AUTH.dbOk=true}
   catch(e){const c=demoLoad(CACHE_KEY);if(c){POSTS=c.map(fromRow);toast('Supabase에 연결하지 못해 저장해 둔 글을 보여 드려요')}else toast(koErr(e.message)+' 예시 글을 보여 드려요')}
 }
 /* 내 추천·스크랩·팔로우 (JWT를 붙여야 내 행만 돌아옴) */
 let MINE_UP={};
 function restoreUp(){Object.keys(MINE_UP).forEach(id=>{const p=POSTS.find(x=>x.id===+id);if(p)p.up+=1});MINE_UP={}}
+/* 글을 다시 읽을 때: 추천 수 보정(MINE_UP)을 비우고 글 → 내 기록 순서로 */
+async function reloadAll(){MINE_UP={};await loadPosts();await loadMine()}
 async function loadMine(){
   if(AUTH.mode!=='supabase'||!AUTH.user)return;
   try{
@@ -919,6 +1034,88 @@ async function loadMine(){
     const add=(tbl,obj,key,row)=>Object.keys(obj).filter(k=>obj[k]&&!S[key][k]).map(k=>sb('/rest/v1/'+tbl,{method:'POST',auth:true,prefer:'resolution=ignore-duplicates,return=minimal',body:row(k)}).then(()=>{S[key][k]=true;AUTH.merged++;if(tbl==='votes')MINE_UP[k]=1}).catch(()=>{}));
     await Promise.all([...add('votes',guest.voted,'voted',k=>({post_id:+k})),...add('scraps',guest.scrap,'scrap',k=>({post_id:+k})),...add('follows',guest.follow,'follow',k=>({nick:k}))]);
   }catch(e){}
+  await loadProfile();
+}
+
+/* ---------- 0.0.7 운영: 내 등급·제재 상태 ---------- */
+const isAdmin=()=>!!(AUTH.prof&&AUTH.prof.role==='admin');
+function banInfo(){const p=AUTH.prof;if(!p||!p.banned_until)return null;
+  const perm=p.banned_until==='infinity';if(!perm&&new Date(p.banned_until)<=Date.now())return null;
+  return {perm,until:perm?'':kst(p.banned_until),reason:p.ban_reason||''}}
+const banText=b=>b.perm?`영구 이용 정지된 계정이에요. 사유: ${esc(b.reason)}`:`<b class="num">${b.until}</b>까지 글쓰기·댓글·신고가 정지됐어요. 사유: ${esc(b.reason)}`;
+async function loadProfile(){
+  AUTH.prof=null;AUTH.opsOn=false;S.reported={};if(AUTH.mode!=='supabase'||!AUTH.user)return;
+  try{const [p]=await sb('/rest/v1/profiles?select=role,warnings,banned_until,ban_reason&id=eq.'+AUTH.user.id,{auth:true});AUTH.prof=p||null;AUTH.opsOn=true;
+    (await sb('/rest/v1/reports?select=target_type,target_id',{auth:true})).forEach(x=>S.reported[x.target_type+'-'+x.target_id]=true)}
+  catch(e){}   /* 0.0.7 SQL 실행 전이면 운영 기능만 꺼짐 */
+}
+
+/* ---------- 0.0.7 신고 ---------- */
+const REASONS=['욕설·비방','허위 리뷰','광고·협찬 미표시','도배·스팸','개인정보 노출','음란·불쾌','기타'];
+function reportBtn(type,id,aid){if(!id||(AUTH.user&&aid&&aid===AUTH.user.id))return '';
+  const k=type+'-'+id,done=(S.reported||{})[k];return `<button type="button" class="link-btn" data-report="${k}" ${done?'disabled':''}>${done?'신고함':'신고'}</button>`}
+function openReport(k){
+  if(needLogin('신고하려면 로그인해 주세요.'))return;
+  if(AUTH.mode!=='supabase'){toast('데모 모드에서는 신고가 저장되지 않아요');return}
+  if(!AUTH.opsOn){toast('신고 기능을 쓰려면 SQL Editor에서 0.0.7 SQL을 먼저 실행해 주세요');return}
+  if(banInfo()){toast('정지 기간에는 신고할 수 없어요');return}
+  const type=k.split('-')[0];let d=$('#report-dlg');
+  if(!d){d=document.createElement('dialog');d.id='report-dlg';d.className='modal';document.body.appendChild(d)}
+  d.innerHTML=`<form id="report-form" data-k="${k}" novalidate><h2>${type==='post'?'글':'댓글'} 신고</h2>
+    <p class="hint" style="margin:0">신고한 사람은 공개되지 않아요. 처리 대기 신고가 3건 쌓이면 운영진이 확인하기 전까지 자동으로 가려져요.</p>
+    <fieldset style="border:0;padding:0;margin:0"><legend class="hint" style="margin-bottom:6px">어떤 문제인가요</legend><div class="reasons">${REASONS.map(r=>`<label><input type="radio" name="rr" value="${r}">${r}</label>`).join('')}</div></fieldset>
+    <div class="field"><label for="rp-detail">자세한 내용 <span class="hint">선택 · 500자까지</span></label><textarea id="rp-detail" maxlength="500" placeholder="예) 가게 위치와 가격이 실제와 달라요"></textarea></div>
+    <span class="err" id="rp-err" role="alert"></span>
+    <div style="display:flex;gap:8px;justify-content:flex-end"><button type="button" class="btn" id="rp-cancel">취소</button><button type="submit" class="btn primary">신고하기</button></div></form>`;
+  d.showModal();
+}
+
+/* ---------- 0.0.7 관리자 화면 (#admin): 관리자 함수는 /rest/v1/rpc/… 로 호출 ---------- */
+const ADM={tab:'queue',q:[],users:[],log:[],loaded:false,loading:false,err:''};
+const rpc=(fn,body={})=>sb('/rest/v1/rpc/'+fn,{method:'POST',auth:true,body});
+async function loadAdmin(){
+  ADM.loading=true;ADM.err='';
+  try{const [q,u,l]=await Promise.all([rpc('admin_report_queue'),rpc('admin_users'),sb('/rest/v1/admin_actions?select=*&order=created_at.desc&limit=100',{auth:true})]);
+    Object.assign(ADM,{q,users:u,log:l,loaded:true})}
+  catch(e){ADM.err=koErr(e.message)}
+  ADM.loading=false;if(location.hash==='#admin')render();
+}
+const ACT={auto_hide:'자동 숨김',hide:'숨김',restore:'숨김 해제·신고 기각',warn:'경고',suspend_7d:'7일 정지',ban:'영구 정지',unban:'정지 해제'};
+function userState(u){if(!u||!u.banned_until)return '';if(u.banned_until==='infinity')return '영구 정지';
+  return new Date(u.banned_until)>Date.now()?kst(u.banned_until).slice(5).replace('-','.')+'까지 정지':''}
+function admCard(x){
+  const k=x.target_type+'-'+x.target_id,cnt={};x.reasons.forEach(r=>cnt[r.reason]=(cnt[r.reason]||0)+1);
+  const det=x.reasons.filter(r=>r.detail).slice(0,3),au=ADM.users.find(u=>u.id===x.author_id),st=userState(au);
+  return `<div class="adm-card"><div class="top-line"><span class="tag">${x.target_type==='post'?'글':'댓글'}</span>${x.hidden?`<span class="tag red">${x.hidden_by==='auto'?'자동 숨김됨':'운영진 숨김'}</span>`:'<span class="tag ok">공개 중</span>'}<span class="tag">신고 ${x.total}건${x.pending?` · 대기 ${x.pending}`:''}</span><small class="hint num" style="margin-left:auto">${x.last_at?kst(x.last_at).slice(5):''}</small></div>
+    <h3><a href="#post-${x.post_id}">${esc(x.label)}</a></h3>${x.excerpt&&x.excerpt!==x.label?`<p class="ex">${esc(x.excerpt)}</p>`:''}
+    <p class="ex">작성자 <b>${esc(x.author_nick)}</b>${au?` · 경고 ${au.warnings}회${st?' · '+st:''}`:x.author_id?'':' · 예시 글이라 계정 없음'}${x.hidden&&x.hidden_reason?` · 숨김 사유: ${esc(x.hidden_reason)}`:''}</p>
+    ${x.total?`<ul>${Object.entries(cnt).map(([r,n])=>`<li>${esc(r)} ${n}건</li>`).join('')}${det.map(r=>`<li class="hint">“${esc(r.detail)}”</li>`).join('')}</ul>`:''}
+    <div class="adm-act"><input type="text" id="why-${k}" placeholder="처리 사유 (관리 기록에 남아요)" aria-label="처리 사유">${x.hidden?'':`<button class="btn primary" type="button" data-adm="hide" data-k="${k}">숨기기</button>`}<button class="btn" type="button" data-adm="restore" data-k="${k}">${x.hidden?'숨김 풀기':'문제 없음'}</button>${au&&au.role!=='admin'?`<button class="btn" type="button" data-adm="warn" data-k="${k}" data-user="${au.id}">작성자 경고</button><button class="btn" type="button" data-adm="suspend_7d" data-k="${k}" data-user="${au.id}">작성자 7일 정지</button>`:''}</div></div>`;
+}
+function userCard(u){
+  const st=userState(u),k='u'+u.id;
+  return `<div class="adm-card"><div class="top-line"><b>${esc(u.nickname)}</b>${u.role==='admin'?'<span class="tag with">관리자</span>':''}${st?`<span class="tag red">${st}</span>`:''}${u.warnings?`<span class="tag">경고 ${u.warnings}회</span>`:''}<small class="hint" style="margin-left:auto">${esc(u.email||'')}</small></div>
+    <p class="ex">가입 <span class="num">${kst(u.joined).slice(0,10)}</span> · 글 ${u.posts} · 받은 신고 ${u.reported}${st&&u.ban_reason?` · 정지 사유: ${esc(u.ban_reason)}`:''}</p>
+    ${u.role==='admin'?'':`<div class="adm-act"><input type="text" id="why-${k}" placeholder="제재 사유 (관리 기록에 남아요)" aria-label="제재 사유"><button class="btn" type="button" data-adm="warn" data-k="${k}" data-user="${u.id}">경고</button><button class="btn" type="button" data-adm="suspend_7d" data-k="${k}" data-user="${u.id}">7일 정지</button><button class="btn" type="button" data-adm="ban" data-k="${k}" data-user="${u.id}">영구 정지</button>${st?`<button class="btn" type="button" data-adm="unban" data-k="${k}" data-user="${u.id}">정지 해제</button>`:''}</div>`}</div>`;
+}
+function adminPage(){
+  if(!AUTH.user)return loginPage();
+  if(!isAdmin())return `<div class="empty">관리자만 볼 수 있는 페이지예요.${AUTH.mode!=='supabase'?' 데모 모드에서는 쓸 수 없어요.':''}</div>`;
+  if(!ADM.loaded&&!ADM.loading)loadAdmin();
+  if(!ADM.loaded)return `<div class="empty">${ADM.err?esc(ADM.err):'관리 정보를 불러오는 중이에요'}</div>`;
+  const pend=ADM.q.filter(x=>x.pending>0),hid=ADM.q.filter(x=>x.hidden),banned=ADM.users.filter(u=>userState(u));
+  const today=ADM.log.filter(l=>kst(l.created_at).slice(0,10)===TODAY).length;
+  const tabs=[['queue','처리 대기',pend.length],['hidden','숨김 중',hid.length],['users','회원 · 제재',ADM.users.length],['log','관리 기록',ADM.log.length]];
+  let body;
+  if(ADM.tab==='queue'||ADM.tab==='hidden'){const list=ADM.tab==='queue'?pend:hid;body=list.length?list.map(admCard).join(''):`<div class="empty">${ADM.tab==='queue'?'처리할 신고가 없어요.':'숨김 중인 글이 없어요.'}</div>`}
+  else if(ADM.tab==='users')body=ADM.users.map(userCard).join('');
+  else body=(ADM.log.length?`<div class="simple adm-log">${ADM.log.map(l=>`<div><span class="num">${kst(l.created_at).slice(5).replace('-','.')}</span><b>${esc(l.actor_nick)}</b><span><span class="tag ${/hide|ban|suspend|warn/.test(l.action)&&l.action!=='unban'?'red':''}">${ACT[l.action]||esc(l.action)}</span> ${l.target_type==='user'?'회원':l.target_type==='post'?'글':'댓글'} “${esc(l.target_label||l.target_id)}”${l.reason?` · ${esc(l.reason)}`:''}</span></div>`).join('')}</div>`:`<div class="empty">아직 기록이 없어요.</div>`)
+    +'<p class="hint">관리 기록은 관리자도 고치거나 지울 수 없어요. DB 보안 규칙이 넣기·고치기·지우기를 모두 막아 둡니다.</p>';
+  return `<div class="page">
+  <div class="board-h"><div><h1>운영 관리</h1><p>신고 처리, 숨김, 회원 제재. 모든 처리는 사유와 함께 관리 기록에 남아요.</p></div><button class="btn" type="button" id="adm-reload">새로고침</button></div>
+  <div class="adm-stats"><div><b>${pend.length}</b><span>처리 대기 신고</span></div><div><b>${hid.length}</b><span>숨김 중인 글·댓글</span></div><div><b>${banned.length}</b><span>정지 중인 회원</span></div><div><b>${today}</b><span>오늘 처리</span></div></div>
+  <div class="chiprow" role="tablist">${tabs.map(([k,n,c])=>`<button type="button" role="tab" aria-selected="${ADM.tab===k}" class="chip ${ADM.tab===k?'on':''}" data-admtab="${k}">${n} <span class="num">${c}</span></button>`).join('')}</div>
+  <div style="display:flex;flex-direction:column;gap:10px">${body}</div></div>`;
 }
 /* 추천·스크랩·팔로우 누르기: 로그인했으면 DB에 넣고 빼기 */
 async function toggleRow(tbl,key,id,row){
@@ -981,25 +1178,58 @@ function signupPage(){
   <p class="mode-note">${modeNote()}</p>
   </div></div>`;
 }
+const otpField=()=>`<div class="field"><label for="otp-code">인증번호 <span class="hint" id="otp-timer"></span></label><input type="text" id="otp-code" class="otp" inputmode="numeric" autocomplete="one-time-code" maxlength="10" placeholder="000000"></div>`;
+const demoCode=o=>o&&o.demo?`<div class="notice-box">데모 모드라 메일 대신 여기에 보여 드려요. 인증번호 <b class="num">${o.demo.code}</b></div>`:'';
 function verifyPage(){
-  return `<div class="auth-wrap"><div class="auth-card" style="text-align:center;align-items:center">
+  const o=AUTH.otp&&AUTH.otp.kind==='signup'?AUTH.otp:null;
+  if(!o)return `<div class="auth-wrap"><div class="auth-card"><h1>인증할 가입 정보가 없어요</h1><p>회원가입부터 진행해 주세요.</p><a class="btn primary block" href="#signup">회원가입</a></div></div>`;
+  return `<div class="auth-wrap"><div class="auth-card">
   <div class="mail-ic" aria-hidden="true"><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg></div>
-  <h1>메일함을 확인해 주세요</h1>
-  <p style="margin:0"><b>${esc(AUTH.pendingEmail||'')}</b>로 인증 메일을 보냈어요.<br>메일 속 링크를 누르면 가입이 끝나고 자동으로 로그인됩니다.</p>
-  <p class="hint" style="margin:0">메일이 안 보이면 스팸함을 확인해 주세요.</p>
-  <a class="btn" href="#login">로그인 화면으로</a></div></div>`;
+  <div><h1>메일 인증</h1><p><b>${esc(o.email)}</b>로 6자리 인증번호를 보냈어요. 10분 안에 입력하면 가입이 끝나요.</p></div>
+  ${demoCode(o)}
+  <form id="otp-form" novalidate>${otpField()}
+    <span class="err" id="otp-err" role="alert"></span>
+    <button class="btn primary block" type="submit" id="otp-submit">인증하고 가입 마치기</button></form>
+  <div class="row-links"><button type="button" id="otp-resend">인증번호 다시 받기</button><a href="#signup">이메일 다시 입력</a></div>
+  <p class="hint">메일이 안 보이면 스팸함을 확인해 주세요. 메일 인증을 마치지 않은 계정은 로그인할 수 없어요.</p>
+  </div></div>`;
+}
+function resetPage(){
+  const o=AUTH.otp&&AUTH.otp.kind==='recovery'?AUTH.otp:null;
+  return `<div class="auth-wrap"><div class="auth-card">
+  <div><h1>비밀번호 찾기</h1><p>${o?`<b>${esc(o.email)}</b>로 보낸 6자리 인증번호와 새 비밀번호를 입력해 주세요.`:'가입한 이메일로 6자리 인증번호를 보내 드려요.'}</p></div>
+  ${o?`${demoCode(o)}<form id="reset2-form" novalidate>${otpField()}
+    <div class="grid2">${pwField('rs-pw','새 비밀번호','8자 이상, 영문과 숫자 섞어서','new-password')}${pwField('rs-pw2','새 비밀번호 확인','한 번 더 입력','new-password')}</div>
+    <span class="err" id="otp-err" role="alert"></span>
+    <button class="btn primary block" type="submit" id="otp-submit">비밀번호 바꾸고 로그인</button></form>
+  <div class="row-links"><button type="button" id="otp-resend">인증번호 다시 받기</button><button type="button" id="reset-again">다른 이메일로</button></div>`
+  :`<form id="reset1-form" novalidate><div class="field"><label for="rs-email">이메일</label><input type="email" id="rs-email" autocomplete="email" placeholder="you@example.com" value="${esc(AUTH.resetEmail||'')}"></div>
+    <span class="err" id="rs-err" role="alert"></span><button class="btn primary block" type="submit" id="rs-submit">인증번호 받기</button></form>
+  <div class="row-links"><a href="#login">로그인으로 돌아가기</a><span></span></div>`}
+  <p class="hint">가입하지 않은 이메일이면 메일이 가지 않아요. 보안을 위해 가입 여부는 알려 드리지 않아요.</p>
+  </div></div>`;
+}
+function banPage(b){
+  return `<div class="auth-wrap"><div class="auth-card"><h1>글쓰기가 정지된 계정이에요</h1><div class="warn-box"><span>${banText(b)}</span></div>
+  <p>운영 정책에 따라 정지 기간에는 글·댓글·신고를 할 수 없어요. 읽기와 추천, 가고 싶은 곳 담기는 그대로 쓸 수 있어요.</p><a class="btn block" href="#me">내 정보 보기</a></div></div>`;
+}
+function accountBox(){
+  if(!AUTH.opsOn)return '';const p=AUTH.prof||{},b=banInfo();
+  return `<section><div class="sec-h"><h2>계정 상태</h2>${isAdmin()?'<a href="#admin">운영 관리 페이지 →</a>':''}</div>
+  ${b?`<div class="warn-box"><span>${banText(b)}</span></div>`:`<div class="notice-box">${isAdmin()?'<b>관리자</b> 계정이에요. ':''}정상 이용 중이에요. 받은 경고 <b class="num">${p.warnings||0}</b>회${p.warnings?' · 경고가 3회 쌓이면 7일 동안 글쓰기가 정지돼요.':''}</div>`}</section>`;
 }
 function mePage(){
   if(!AUTH.user)return loginPage();
-  const u=AUTH.user,mine=POSTS.filter(p=>p.au===u.nickname);
+  const u=AUTH.user,mine=POSTS.concat(HIDDEN).filter(p=>p.au===u.nickname);
   return `<div class="page">
   <section class="profile">${av(u.nickname,64)}<div style="min-width:0"><h1>${esc(u.nickname)}</h1><p class="meta"><span>${esc(u.email)}</span><span>${u.provider==='email'?'이메일 가입':esc(u.provider)+' 로그인'}</span>${u.created?`<span class="num">가입 ${u.created.replace(/-/g,'.')}</span>`:''}</p>
     <div class="chiprow" style="margin-top:8px">${(u.regions||[]).map(r=>`<span class="tag with">${esc(r)}</span>`).join('')}${(u.foods||[]).map(r=>`<span class="tag">${esc(r)}</span>`).join('')}${!(u.regions||[]).length&&!(u.foods||[]).length?'<span class="hint">관심 지역과 음식을 아직 고르지 않았어요</span>':''}</div></div>
     <button class="btn" type="button" id="logout" style="margin-left:auto">로그아웃</button></section>
   <div class="notice-box">${modeNote()}</div>
+  ${accountBox()}
   ${(()=>{const w=POSTS.filter(p=>S.scrap[p.id]);return `<section><div class="sec-h"><h2>가고 싶은 곳 <span class="num" style="color:var(--accent)">${w.length}</span></h2></div>${w.length?`<div class="same">${w.map(x=>`<a href="#post-${x.id}"><img src="${photo(x)}" alt=""><div><b>${esc(x.shop?x.shop.name:x.title)}</b><span class="meta">${x.shop?esc(x.shop.area.split(' ').slice(1).join(' ')):''}</span></div></a>`).join('')}</div>`:`<div class="hint">리뷰나 사진 카드의 ☆를 눌러 가고 싶은 곳을 담아 보세요.</div>`}</section>`})()}
   <section><div class="sec-h"><h2>내가 쓴 글 <span class="num" style="color:var(--accent)">${mine.length}</span></h2><a href="#write">리뷰 쓰기 →</a></div>
-  ${mine.length?`<div class="simple">${mine.map(p=>`<a href="#post-${p.id}"><span><span class="head">[${p.head}]</span>${esc(p.title)}</span><span class="meta num">${ddate(p.d)}</span></a>`).join('')}</div>`:`<div class="empty" style="border:1px dashed var(--line);border-radius:var(--r)">아직 쓴 글이 없어요. 최근에 다녀온 집부터 남겨 보세요.<br><br><a class="btn primary" href="#write">첫 리뷰 쓰기</a></div>`}</section>
+  ${mine.length?`<div class="simple">${mine.map(p=>`<a href="#post-${p.id}"><span>${p.hidden?'<span class="tag red">숨김</span> ':''}<span class="head">[${p.head}]</span>${esc(p.title)}</span><span class="meta num">${ddate(p.d)}</span></a>`).join('')}</div>`:`<div class="empty" style="border:1px dashed var(--line);border-radius:var(--r)">아직 쓴 글이 없어요. 최근에 다녀온 집부터 남겨 보세요.<br><br><a class="btn primary" href="#write">첫 리뷰 쓰기</a></div>`}</section>
   </div>`;
 }
 function renderAuthUI(){
@@ -1010,22 +1240,24 @@ function renderAuthUI(){
     bar.innerHTML=`<p>${parts}을 담았어요.<br><small>로그인하지 않으면 창을 닫을 때 사라져요.</small></p><a class="btn primary" href="#login">로그인하고 저장</a><button type="button" class="x" id="bar-x" aria-label="닫기">×</button>`;bar.hidden=false}
   else if(bar)bar.hidden=true;
   document.body.classList.toggle('has-bar',show);
-  $('#auth-slot').innerHTML=u?`<a href="#me" class="me-link" aria-label="내 정보">${av(u.nickname)}</a>`:`<a class="btn" href="#login">로그인</a>`;
+  $('#auth-slot').innerHTML=u?`${isAdmin()?'<a class="btn" href="#admin">관리</a>':''}<a href="#me" class="me-link" aria-label="내 정보">${av(u.nickname)}</a>`:`<a class="btn" href="#login">로그인</a>`;
   $('#me-box').innerHTML=u?`<a class="me" href="#me">${av(u.nickname)}<div><b>${esc(u.nickname)}</b> <span class="lv">· ${user(u.nickname).lv} 등급</span><br><small>내 글 ${POSTS.filter(p=>p.au===u.nickname).length} · 내 정보 보기</small></div></a>`
    :`<div class="me" style="flex-direction:column;align-items:stretch;gap:8px"><small style="color:var(--ink-soft)">로그인하면 리뷰를 쓰고 추천할 수 있어요.</small><div style="display:flex;gap:6px"><a class="btn" href="#login" style="flex:1">로그인</a><a class="btn" href="#signup" style="flex:1">회원가입</a></div></div>`;
-  $('#mode-text').textContent=AUTH.mode==='supabase'?(AUTH.dbOk?'Supabase 연결됨 · 글·댓글·추천·가입이 실제 DB에 저장됩니다 (활동 숫자는 아직 예시)':'Supabase 연결 실패 · 저장해 둔 글이나 예시 글을 보여 주는 중'):'CIRCLE 커뮤니티 프로토타입 · 데모 모드라 회원 정보는 이 브라우저에만 저장되고, 글과 사진은 예시입니다';
+  $('#mode-text').textContent=AUTH.mode==='supabase'?(AUTH.dbOk?'Supabase 연결됨 · 글·댓글·추천·신고·가입이 실제 DB에 저장됩니다 (활동 숫자는 아직 예시)':'Supabase 연결 실패 · 저장해 둔 글이나 예시 글을 보여 주는 중'):'CIRCLE 커뮤니티 프로토타입 · 데모 모드라 회원 정보는 이 브라우저에만 저장되고, 글과 사진은 예시입니다';
 }
 
 /* ---------- 라우팅 ---------- */
 function route(){
   const h=location.hash.slice(1)||'home';let html,cur='home';
-  if(!['login','signup','verify','me'].includes(h))S.lastPage=h;
-  if(h.startsWith('post-')){html=post(+h.slice(5));const p=POSTS.find(x=>x.id===+h.slice(5));cur=p?p.b:''}
+  if(!['login','signup','verify','me','reset','admin'].includes(h))S.lastPage=h;
+  if(h.startsWith('post-')){html=post(+h.slice(5));const p=findPost(+h.slice(5));cur=p?p.b:''}
   else if(h.startsWith('b-')){const id=h.slice(2);if(S.board!==id){S.board=id;S.w='전체'}cur=id;html=board()}
-  else if(h==='write'){cur='';if(!AUTH.user){AUTH.after='write';AUTH.msg='리뷰를 쓰려면 로그인해 주세요.';html=loginPage()}else html=write()}
+  else if(h==='write'){cur='';if(!AUTH.user){AUTH.after='write';AUTH.msg='리뷰를 쓰려면 로그인해 주세요.';html=loginPage()}else if(banInfo())html=banPage(banInfo());else html=write()}
   else if(h==='login'){cur='';html=AUTH.user?mePage():loginPage()}
   else if(h==='signup'){cur='';html=signupPage()}
   else if(h==='verify'){cur='';html=verifyPage()}
+  else if(h==='reset'){cur='';html=resetPage()}
+  else if(h==='admin'){cur='';html=adminPage()}
   else if(h==='me'){cur='';html=mePage()}
   else if(h==='search'){cur='';S.board='search';html=board()}
   else html=home();
@@ -1055,7 +1287,22 @@ document.addEventListener('click',e=>{
   else if(d.pwshow){const i=$('#'+d.pwshow);i.type=i.type==='password'?'text':'password';t.textContent=i.type==='password'?'보기':'숨기기'}
   else if(d.oauth){oauth(d.oauth)}
   else if(d.pickchip){t.classList.toggle('on');t.setAttribute('aria-pressed',t.classList.contains('on'))}
-  else if(t.id==='reset-pw'){resetPw($('#li-email').value.trim()).then(m=>{$('#li-err').textContent=m||''})}
+  else if(t.id==='reset-pw'){AUTH.resetEmail=$('#li-email').value.trim();if(AUTH.otp&&AUTH.otp.kind!=='recovery')AUTH.otp=null;go('reset')}
+  else if(t.id==='otp-resend'){t.disabled=true;resendCode().then(m=>{if(m){$('#otp-err').textContent=m;return}render();toast('인증번호를 다시 보냈어요')})}
+  else if(t.id==='reset-again'){AUTH.otp=null;render()}
+  else if(d.report){openReport(d.report)}
+  else if(t.id==='rp-cancel'){$('#report-dlg').close()}
+  else if(d.admtab){ADM.tab=d.admtab;render()}
+  else if(t.id==='adm-reload'){loadAdmin().then(()=>toast('새로 불러왔어요'))}
+  else if(d.admhide){const [type,id]=d.admhide.split('-'),why=(prompt('숨기는 사유를 적어 주세요. 관리 기록에 남아요.')||'').trim();if(!why)return;
+    rpc('admin_hide',{p_type:type,p_id:+id,p_reason:why}).then(async()=>{ADM.loaded=false;await reloadAll();render();toast('숨겼고 관리 기록에 남겼어요')}).catch(err=>toast(koErr(err.message)))}
+  else if(d.adm){const inp=$('#why-'+d.k),why=inp?inp.value.trim():'';
+    if(!why){toast('처리 사유를 적어 주세요. 관리 기록에 남아요');inp&&inp.focus();return}
+    let call;
+    if(d.adm==='hide'||d.adm==='restore'){const [type,id]=d.k.split('-');call=rpc('admin_'+d.adm,{p_type:type,p_id:+id,p_reason:why})}
+    else{const ask={warn:'경고를 줄까요? 경고가 3회 쌓이면 자동으로 7일 정지돼요.',suspend_7d:'7일 동안 글쓰기·댓글·신고를 정지할까요?',ban:'영구 정지할까요? 풀려면 정지 해제를 눌러야 해요.',unban:'정지를 풀까요?'}[d.adm];
+      if(!confirm(ask))return;call=rpc('admin_sanction',{p_user:d.user,p_level:d.adm,p_reason:why})}
+    t.disabled=true;call.then(async()=>{await reloadAll();await loadAdmin();toast('처리했고 관리 기록에 남겼어요')}).catch(err=>{t.disabled=false;toast(koErr(err.message))})}
   else if(t.id==='logout'){signOut().then(()=>{go('home');toast('로그아웃했어요')})}
   else if(t.id==='bar-x'){S.barClosed=true;renderAuthUI()}
   else if(t.id==='bell')toast('새 알림 3개: 댓글 2, 추천 1');
@@ -1086,7 +1333,9 @@ document.addEventListener('submit',e=>{
     if(!/^\S+@\S+\.\S+$/.test(em)){err.textContent='이메일 주소를 확인해 주세요.';$('#li-email').focus();return}
     if(!pw){err.textContent='비밀번호를 입력해 주세요.';$('#li-pw').focus();return}
     btn.disabled=true;btn.textContent='로그인하는 중';const r=await signIn(em,pw);btn.disabled=false;btn.textContent='로그인';
-    if(r.error){err.textContent=r.error;return}
+    if(r.error){
+      if(r.unconfirmed){AUTH.otp={email:em,kind:'signup',sent:0,until:0};const m=await resendCode();go('verify');if(m)setTimeout(()=>{const x=$('#otp-err');if(x)x.textContent=m},80);else toast('인증번호를 새로 보냈어요');return}
+      err.textContent=r.error;return}
     const to=AUTH.after&&AUTH.after!=='login'?AUTH.after:S.lastPage;AUTH.after=null;go(to);toast(nick()+'님, 반가워요');afterAuthMerge()})();return}
   if(e.target.id==='signup-form'){(async()=>{const err=$('#su-err'),btn=$('#su-submit');document.querySelectorAll('#signup-form input.bad').forEach(i=>i.classList.remove('bad'));
     const f={email:$('#su-email').value.trim(),nickname:$('#su-nick').value.trim(),password:$('#su-pw').value,
@@ -1099,17 +1348,40 @@ document.addEventListener('submit',e=>{
     if(!$('#su-terms').checked||!$('#su-rules').checked){err.textContent='필수 항목 두 가지에 동의해 주세요.';return}
     btn.disabled=true;btn.textContent='가입하는 중';const r=await signUp(f);btn.disabled=false;btn.textContent='가입하기';
     if(r.error)return bad(r.field||'su-email',r.error);
-    if(r.needVerify){AUTH.pendingEmail=f.email;go('verify');return}
+    if(r.needVerify){go('verify');toast('인증번호를 메일로 보냈어요');return}
     const to=AUTH.after&&!['login','signup'].includes(AUTH.after)?AUTH.after:S.lastPage;AUTH.after=null;go(to);toast('가입을 환영해요, '+f.nickname+'님');afterAuthMerge()})();return}
+  if(e.target.id==='otp-form'||e.target.id==='reset2-form'){(async()=>{
+    const code=$('#otp-code').value.replace(/\D/g,''),err=$('#otp-err'),btn=$('#otp-submit'),kind=AUTH.otp&&AUTH.otp.kind;let r;
+    if(code.length<6){err.textContent='메일로 받은 6자리 인증번호를 입력해 주세요.';$('#otp-code').focus();return}
+    if(e.target.id==='reset2-form'){const a=$('#rs-pw').value;
+      if(!(a.length>=8&&/[A-Za-z]/.test(a)&&/\d/.test(a))){err.textContent='새 비밀번호는 8자 이상, 영문과 숫자를 함께 써 주세요.';return}
+      if(a!==$('#rs-pw2').value){err.textContent='두 비밀번호가 달라요.';return}
+      btn.disabled=true;r=await finishRecovery(code,a)}
+    else{btn.disabled=true;r=await verifyCode(code)}
+    btn.disabled=false;if(r.error){err.textContent=r.error;return}
+    AUTH.otp=null;const to=AUTH.after&&!['login','signup','verify','reset'].includes(AUTH.after)?AUTH.after:S.lastPage;AUTH.after=null;go(to||'home');
+    if(kind==='recovery')toast('비밀번호를 바꾸고 로그인했어요');else{toast('메일 인증이 끝났어요. 가입을 환영해요, '+nick()+'님');afterAuthMerge()}})();return}
+  if(e.target.id==='reset1-form'){(async()=>{const em=$('#rs-email').value.trim(),err=$('#rs-err'),btn=$('#rs-submit');
+    if(!/^\S+@\S+\.\S+$/.test(em)){err.textContent='이메일 주소를 확인해 주세요.';return}
+    btn.disabled=true;const r=await sendRecovery(em);btn.disabled=false;if(r.error){err.textContent=r.error;return}
+    render();toast('인증번호를 보냈어요. 메일함을 확인해 주세요')})();return}
+  if(e.target.id==='report-form'){const k=e.target.dataset.k,[type,id]=k.split('-'),why=(e.target.querySelector('input[name=rr]:checked')||{}).value;
+    if(!why){$('#rp-err').textContent='신고 사유를 골라 주세요.';return}
+    const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;
+    sb('/rest/v1/reports',{method:'POST',auth:true,prefer:'return=minimal',body:{target_type:type,target_id:+id,reason:why,detail:$('#rp-detail').value.trim()||null}})
+      .then(()=>{S.reported[k]=true;$('#report-dlg').close();render();toast('신고가 접수됐어요. 운영진이 확인할게요')})
+      .catch(err=>{btn.disabled=false;$('#rp-err').textContent=koErr(err.message)});return}
+  if(e.target.id==='cmt-form'&&banInfo()){toast('정지 기간에는 댓글을 쓸 수 없어요');return}
   if(e.target.id==='search-form'){S.q=$('#search-q').value.trim();if(S.q)go('search');return}
   if(e.target.id==='cmt-form'&&needLogin('댓글을 쓰려면 로그인해 주세요.'))return;
   if(e.target.id==='cmt-form'){const id=+e.target.dataset.id,t=$('#cmt-text').value.trim();if(!t)return;
     if(AUTH.mode==='supabase'){const btn=e.target.querySelector('button[type=submit]');btn.disabled=true;
       sb('/rest/v1/comments',{method:'POST',auth:true,prefer:'return=representation',body:{post_id:id,body:t,author_nick:nick()}})
-        .then(([c])=>{const p=POSTS.find(x=>x.id===id);(p.cmts=p.cmts||[]).push({id:c.id,au:c.author_nick,t:c.body,d:kst(c.created_at).slice(11),up:0,re:[]});render();toast('댓글을 등록했어요')})
+        .then(([c])=>{const p=findPost(id);(p.cmts=p.cmts||[]).push({id:c.id,aid:c.author_id,au:c.author_nick,t:c.body,d:kst(c.created_at).slice(11),up:0,re:[]});render();toast('댓글을 등록했어요')})
         .catch(err=>{btn.disabled=false;toast(koErr(err.message))});return}
     (S.extraCmt[id]=S.extraCmt[id]||[]).push({au:nick(),t,d:new Date().toTimeString().slice(0,5),up:0});render();toast('댓글을 등록했어요');return}
   if(e.target.id==='write-form'){
+    if(banInfo()){toast('정지 기간에는 글을 쓸 수 없어요');return}
     const title=$('#w-title').value.trim(),err=$('#w-err');
     if(title.length<2){err.textContent='제목을 두 글자 이상 입력해 주세요.';$('#w-title').focus();return}
     const id=Math.max(...POSTS.map(p=>p.id))+1,now='2026-10-07 '+new Date().toTimeString().slice(0,5);
@@ -1147,6 +1419,9 @@ document.addEventListener('submit',e=>{
   buildActs();route();
   if(AUTH.justIn&&AUTH.user)toast(nick()+'님, 반가워요');
 })();
+setInterval(()=>{const o=AUTH.otp,t=$('#otp-timer'),b=$('#otp-resend');if(!o)return;
+  if(t){const left=Math.max(0,o.until-Date.now());t.textContent=left?`남은 시간 ${Math.floor(left/60000)}:${String(Math.floor(left/1000)%60).padStart(2,'0')}`:'시간이 지났어요. 다시 받아 주세요';t.className=left?'hint':'hint bad'}
+  if(b){const w=Math.ceil((60e3-(Date.now()-o.sent))/1000);b.disabled=w>0;b.textContent=w>0?`다시 받기 (${w}초 뒤)`:'인증번호 다시 받기'}},1000);
 let tick=0;setInterval(()=>{const t=$('#ticker');if(t&&ACTS.length){tick=(tick+1)%ACTS.length;t.style.opacity=0;setTimeout(()=>{t.innerHTML=ACTS[tick];t.style.opacity=.7},300)}
   const w=$('#live-writers');if(w){LIVE.writers=Math.max(6,Math.min(19,LIVE.writers+[-1,0,0,1][Math.floor(Math.random()*4)]));w.textContent=LIVE.writers}},4000);
 </script>
